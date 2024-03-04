@@ -3,6 +3,7 @@ package hscontrol
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -17,6 +18,7 @@ import (
 
 	v1 "github.com/juanfont/headscale/gen/go/headscale/v1"
 	"github.com/juanfont/headscale/hscontrol/db"
+	"github.com/juanfont/headscale/hscontrol/policy"
 	"github.com/juanfont/headscale/hscontrol/types"
 	"github.com/juanfont/headscale/hscontrol/util"
 )
@@ -650,6 +652,64 @@ func (api headscaleV1APIServer) DeleteApiKey(
 	}
 
 	return &v1.DeleteApiKeyResponse{}, nil
+}
+
+// GetACL returns the current ACL.
+func (api headscaleV1APIServer) GetACL(
+	_ context.Context,
+	_ *v1.GetACLRequest,
+) (*v1.GetACLResponse, error) {
+	acl, err := api.h.db.GetACL()
+	if err != nil {
+		return nil, err
+	}
+
+	proto := acl.Proto()
+	if proto == nil {
+		return nil, errors.New("failed to get ACL")
+	}
+
+	return &v1.GetACLResponse{
+		Policy:    proto.GetPolicy(),
+		UpdatedAt: proto.GetUpdatedAt(),
+	}, nil
+}
+
+// SetACL inserts or updates the ACL.
+func (api headscaleV1APIServer) SetACL(
+	_ context.Context,
+	request *v1.SetACLRequest,
+) (*v1.SetACLResponse, error) {
+	polBytes, err := request.GetPolicy().MarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+
+	a, err := policy.LoadACLPolicyFromBytes(polBytes, "json")
+	if err != nil {
+		return nil, types.ErrInvalidPolicyFormat
+	}
+
+	api.h.ACLPolicy = a
+
+	resp, err := api.h.db.SetACL(&types.ACL{
+		Policy: polBytes,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := types.NotifyCtx(context.Background(), "acl-update", "na")
+	api.h.nodeNotifier.NotifyAll(ctx, types.StateUpdate{
+		Type: types.StateFullUpdate,
+	})
+
+	proto := resp.Proto()
+
+	return &v1.SetACLResponse{
+		Policy:    proto.GetPolicy(),
+		UpdatedAt: proto.GetUpdatedAt(),
+	}, nil
 }
 
 // The following service calls are for testing and debugging
