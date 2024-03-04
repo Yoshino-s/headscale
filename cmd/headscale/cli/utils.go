@@ -10,7 +10,6 @@ import (
 
 	v1 "github.com/juanfont/headscale/gen/go/headscale/v1"
 	"github.com/juanfont/headscale/hscontrol"
-	"github.com/juanfont/headscale/hscontrol/policy"
 	"github.com/juanfont/headscale/hscontrol/types"
 	"github.com/juanfont/headscale/hscontrol/util"
 	"github.com/rs/zerolog/log"
@@ -39,19 +38,10 @@ func getHeadscaleApp() (*hscontrol.Headscale, error) {
 		return nil, err
 	}
 
-	// We are doing this here, as in the future could be cool to have it also hot-reload
-
-	if cfg.ACL.PolicyPath != "" {
-		aclPath := util.AbsolutePathFromConfigPath(cfg.ACL.PolicyPath)
-		pol, err := policy.LoadACLPolicyFromPath(aclPath)
-		if err != nil {
-			log.Fatal().
-				Str("path", aclPath).
-				Err(err).
-				Msg("Could not load the ACL policy")
-		}
-
-		app.ACLPolicy = pol
+	if err := app.LoadACLPolicy(false); err != nil {
+		log.Fatal().
+			Err(err).
+			Msg("Could not load the ACL policy")
 	}
 
 	return app, nil
@@ -89,7 +79,11 @@ func getHeadscaleCLIClient() (context.Context, v1.HeadscaleServiceClient, *grpc.
 
 		// Try to give the user better feedback if we cannot write to the headscale
 		// socket.
-		socket, err := os.OpenFile(cfg.UnixSocket, os.O_WRONLY, SocketWritePermissions) //nolint
+		socket, err := os.OpenFile(
+			cfg.UnixSocket,
+			os.O_WRONLY,
+			SocketWritePermissions,
+		) //nolint
 		if err != nil {
 			if os.IsPermission(err) {
 				log.Fatal().

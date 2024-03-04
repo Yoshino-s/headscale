@@ -16,6 +16,8 @@ const (
 	SelfUpdateIdentifier = "self-update"
 	DatabasePostgres     = "postgres"
 	DatabaseSqlite       = "sqlite3"
+	PolicyModeDB         = "db"
+	PolicyModeFile       = "file"
 )
 
 var ErrCannotParsePrefix = errors.New("cannot parse prefix")
@@ -150,7 +152,9 @@ func (su *StateUpdate) Valid() bool {
 		}
 	case StatePeerChangedPatch:
 		if su.ChangePatches == nil {
-			panic("Mandatory field ChangePatches is not set on StatePeerChangedPatch update")
+			panic(
+				"Mandatory field ChangePatches is not set on StatePeerChangedPatch update",
+			)
 		}
 	case StatePeerRemoved:
 		if su.Removed == nil {
@@ -199,7 +203,11 @@ func StateUpdateExpire(nodeID uint64, expiry time.Time) StateUpdate {
 
 func NotifyCtx(ctx context.Context, origin, hostname string) context.Context {
 	ctx2, _ := context.WithTimeout(
-		context.WithValue(context.WithValue(ctx, "hostname", hostname), "origin", origin),
+		context.WithValue(
+			context.WithValue(ctx, "hostname", hostname),
+			"origin",
+			origin,
+		),
 		3*time.Second,
 	)
 	return ctx2

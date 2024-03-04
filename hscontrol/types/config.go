@@ -153,6 +153,7 @@ type CLIConfig struct {
 }
 
 type ACLConfig struct {
+	PolicyMode string
 	PolicyPath string
 }
 
@@ -376,9 +377,11 @@ func GetLogTailConfig() LogTailConfig {
 }
 
 func GetACLConfig() ACLConfig {
+	policyMode := viper.GetString("acl_policy_mode")
 	policyPath := viper.GetString("acl_policy_path")
 
 	return ACLConfig{
+		PolicyMode: policyMode,
 		PolicyPath: policyPath,
 	}
 }

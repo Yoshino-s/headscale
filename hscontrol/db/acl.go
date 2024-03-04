@@ -46,7 +46,11 @@ func (hsdb *HSDatabase) GetACL() (*types.ACL, error) {
 		Where("id = ?", 1).
 		First(&acl).
 		Error; err != nil {
-		return nil, errors.Wrap(err, "fetching ACL from db")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return hsdb.SetACL(&types.ACL{Policy: []byte("{}")})
+		} else {
+			return nil, errors.Wrap(err, "fetching ACL from db")
+		}
 	}
 
 	return &acl, nil

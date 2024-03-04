@@ -10,7 +10,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	structpb "google.golang.org/protobuf/types/known/structpb"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 )
@@ -22,61 +21,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ACL struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Policy    *structpb.Struct       `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
-	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-}
-
-func (x *ACL) Reset() {
-	*x = ACL{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_headscale_v1_acl_proto_msgTypes[0]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *ACL) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ACL) ProtoMessage() {}
-
-func (x *ACL) ProtoReflect() protoreflect.Message {
-	mi := &file_headscale_v1_acl_proto_msgTypes[0]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ACL.ProtoReflect.Descriptor instead.
-func (*ACL) Descriptor() ([]byte, []int) {
-	return file_headscale_v1_acl_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *ACL) GetPolicy() *structpb.Struct {
-	if x != nil {
-		return x.Policy
-	}
-	return nil
-}
-
-func (x *ACL) GetUpdatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
-}
-
 type GetACLRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -86,7 +30,7 @@ type GetACLRequest struct {
 func (x *GetACLRequest) Reset() {
 	*x = GetACLRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_headscale_v1_acl_proto_msgTypes[1]
+		mi := &file_headscale_v1_acl_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -99,7 +43,7 @@ func (x *GetACLRequest) String() string {
 func (*GetACLRequest) ProtoMessage() {}
 
 func (x *GetACLRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_headscale_v1_acl_proto_msgTypes[1]
+	mi := &file_headscale_v1_acl_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -112,7 +56,7 @@ func (x *GetACLRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetACLRequest.ProtoReflect.Descriptor instead.
 func (*GetACLRequest) Descriptor() ([]byte, []int) {
-	return file_headscale_v1_acl_proto_rawDescGZIP(), []int{1}
+	return file_headscale_v1_acl_proto_rawDescGZIP(), []int{0}
 }
 
 type GetACLResponse struct {
@@ -120,14 +64,13 @@ type GetACLResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Policy    *structpb.Struct       `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
-	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Policy *structpb.Struct `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
 }
 
 func (x *GetACLResponse) Reset() {
 	*x = GetACLResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_headscale_v1_acl_proto_msgTypes[2]
+		mi := &file_headscale_v1_acl_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -140,7 +83,7 @@ func (x *GetACLResponse) String() string {
 func (*GetACLResponse) ProtoMessage() {}
 
 func (x *GetACLResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_headscale_v1_acl_proto_msgTypes[2]
+	mi := &file_headscale_v1_acl_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -153,19 +96,12 @@ func (x *GetACLResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetACLResponse.ProtoReflect.Descriptor instead.
 func (*GetACLResponse) Descriptor() ([]byte, []int) {
-	return file_headscale_v1_acl_proto_rawDescGZIP(), []int{2}
+	return file_headscale_v1_acl_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GetACLResponse) GetPolicy() *structpb.Struct {
 	if x != nil {
 		return x.Policy
-	}
-	return nil
-}
-
-func (x *GetACLResponse) GetUpdatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
 	}
 	return nil
 }
@@ -181,7 +117,7 @@ type SetACLRequest struct {
 func (x *SetACLRequest) Reset() {
 	*x = SetACLRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_headscale_v1_acl_proto_msgTypes[3]
+		mi := &file_headscale_v1_acl_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -194,7 +130,7 @@ func (x *SetACLRequest) String() string {
 func (*SetACLRequest) ProtoMessage() {}
 
 func (x *SetACLRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_headscale_v1_acl_proto_msgTypes[3]
+	mi := &file_headscale_v1_acl_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -207,7 +143,7 @@ func (x *SetACLRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetACLRequest.ProtoReflect.Descriptor instead.
 func (*SetACLRequest) Descriptor() ([]byte, []int) {
-	return file_headscale_v1_acl_proto_rawDescGZIP(), []int{3}
+	return file_headscale_v1_acl_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *SetACLRequest) GetPolicy() *structpb.Struct {
@@ -222,14 +158,13 @@ type SetACLResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Policy    *structpb.Struct       `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
-	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Policy *structpb.Struct `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
 }
 
 func (x *SetACLResponse) Reset() {
 	*x = SetACLResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_headscale_v1_acl_proto_msgTypes[4]
+		mi := &file_headscale_v1_acl_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -242,7 +177,7 @@ func (x *SetACLResponse) String() string {
 func (*SetACLResponse) ProtoMessage() {}
 
 func (x *SetACLResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_headscale_v1_acl_proto_msgTypes[4]
+	mi := &file_headscale_v1_acl_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -255,7 +190,7 @@ func (x *SetACLResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetACLResponse.ProtoReflect.Descriptor instead.
 func (*SetACLResponse) Descriptor() ([]byte, []int) {
-	return file_headscale_v1_acl_proto_rawDescGZIP(), []int{4}
+	return file_headscale_v1_acl_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SetACLResponse) GetPolicy() *structpb.Struct {
@@ -265,54 +200,30 @@ func (x *SetACLResponse) GetPolicy() *structpb.Struct {
 	return nil
 }
 
-func (x *SetACLResponse) GetUpdatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
-}
-
 var File_headscale_v1_acl_proto protoreflect.FileDescriptor
 
 var file_headscale_v1_acl_proto_rawDesc = []byte{
 	0x0a, 0x16, 0x68, 0x65, 0x61, 0x64, 0x73, 0x63, 0x61, 0x6c, 0x65, 0x2f, 0x76, 0x31, 0x2f, 0x61,
 	0x63, 0x6c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0c, 0x68, 0x65, 0x61, 0x64, 0x73, 0x63,
-	0x61, 0x6c, 0x65, 0x2e, 0x76, 0x31, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d,
-	0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1c, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x73, 0x74, 0x72, 0x75, 0x63, 0x74, 0x2e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x71, 0x0a, 0x03, 0x41, 0x43, 0x4c, 0x12, 0x2f, 0x0a, 0x06,
+	0x61, 0x6c, 0x65, 0x2e, 0x76, 0x31, 0x1a, 0x1c, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x73, 0x74, 0x72, 0x75, 0x63, 0x74, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x0f, 0x0a, 0x0d, 0x47, 0x65, 0x74, 0x41, 0x43, 0x4c, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x41, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x41, 0x43, 0x4c, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2f, 0x0a, 0x06, 0x70, 0x6f, 0x6c, 0x69, 0x63,
+	0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x53, 0x74, 0x72, 0x75, 0x63, 0x74,
+	0x52, 0x06, 0x70, 0x6f, 0x6c, 0x69, 0x63, 0x79, 0x22, 0x40, 0x0a, 0x0d, 0x53, 0x65, 0x74, 0x41,
+	0x43, 0x4c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2f, 0x0a, 0x06, 0x70, 0x6f, 0x6c,
+	0x69, 0x63, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
+	0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x53, 0x74, 0x72, 0x75,
+	0x63, 0x74, 0x52, 0x06, 0x70, 0x6f, 0x6c, 0x69, 0x63, 0x79, 0x22, 0x41, 0x0a, 0x0e, 0x53, 0x65,
+	0x74, 0x41, 0x43, 0x4c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2f, 0x0a, 0x06,
 	0x70, 0x6f, 0x6c, 0x69, 0x63, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x67,
 	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x53,
-	0x74, 0x72, 0x75, 0x63, 0x74, 0x52, 0x06, 0x70, 0x6f, 0x6c, 0x69, 0x63, 0x79, 0x12, 0x39, 0x0a,
-	0x0a, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x75,
-	0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x22, 0x0f, 0x0a, 0x0d, 0x47, 0x65, 0x74, 0x41,
-	0x43, 0x4c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x7c, 0x0a, 0x0e, 0x47, 0x65, 0x74,
-	0x41, 0x43, 0x4c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2f, 0x0a, 0x06, 0x70,
-	0x6f, 0x6c, 0x69, 0x63, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x67, 0x6f,
-	0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x53, 0x74,
-	0x72, 0x75, 0x63, 0x74, 0x52, 0x06, 0x70, 0x6f, 0x6c, 0x69, 0x63, 0x79, 0x12, 0x39, 0x0a, 0x0a,
-	0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
-	0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x75, 0x70,
-	0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x22, 0x40, 0x0a, 0x0d, 0x53, 0x65, 0x74, 0x41, 0x43,
-	0x4c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2f, 0x0a, 0x06, 0x70, 0x6f, 0x6c, 0x69,
-	0x63, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
-	0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x53, 0x74, 0x72, 0x75, 0x63,
-	0x74, 0x52, 0x06, 0x70, 0x6f, 0x6c, 0x69, 0x63, 0x79, 0x22, 0x7c, 0x0a, 0x0e, 0x53, 0x65, 0x74,
-	0x41, 0x43, 0x4c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2f, 0x0a, 0x06, 0x70,
-	0x6f, 0x6c, 0x69, 0x63, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x67, 0x6f,
-	0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x53, 0x74,
-	0x72, 0x75, 0x63, 0x74, 0x52, 0x06, 0x70, 0x6f, 0x6c, 0x69, 0x63, 0x79, 0x12, 0x39, 0x0a, 0x0a,
-	0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
-	0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x75, 0x70,
-	0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x42, 0x29, 0x5a, 0x27, 0x67, 0x69, 0x74, 0x68, 0x75,
-	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6a, 0x75, 0x61, 0x6e, 0x66, 0x6f, 0x6e, 0x74, 0x2f, 0x68,
-	0x65, 0x61, 0x64, 0x73, 0x63, 0x61, 0x6c, 0x65, 0x2f, 0x67, 0x65, 0x6e, 0x2f, 0x67, 0x6f, 0x2f,
-	0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x72, 0x75, 0x63, 0x74, 0x52, 0x06, 0x70, 0x6f, 0x6c, 0x69, 0x63, 0x79, 0x42, 0x29, 0x5a,
+	0x27, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6a, 0x75, 0x61, 0x6e,
+	0x66, 0x6f, 0x6e, 0x74, 0x2f, 0x68, 0x65, 0x61, 0x64, 0x73, 0x63, 0x61, 0x6c, 0x65, 0x2f, 0x67,
+	0x65, 0x6e, 0x2f, 0x67, 0x6f, 0x2f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -327,29 +238,23 @@ func file_headscale_v1_acl_proto_rawDescGZIP() []byte {
 	return file_headscale_v1_acl_proto_rawDescData
 }
 
-var file_headscale_v1_acl_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_headscale_v1_acl_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_headscale_v1_acl_proto_goTypes = []interface{}{
-	(*ACL)(nil),                   // 0: headscale.v1.ACL
-	(*GetACLRequest)(nil),         // 1: headscale.v1.GetACLRequest
-	(*GetACLResponse)(nil),        // 2: headscale.v1.GetACLResponse
-	(*SetACLRequest)(nil),         // 3: headscale.v1.SetACLRequest
-	(*SetACLResponse)(nil),        // 4: headscale.v1.SetACLResponse
-	(*structpb.Struct)(nil),       // 5: google.protobuf.Struct
-	(*timestamppb.Timestamp)(nil), // 6: google.protobuf.Timestamp
+	(*GetACLRequest)(nil),   // 0: headscale.v1.GetACLRequest
+	(*GetACLResponse)(nil),  // 1: headscale.v1.GetACLResponse
+	(*SetACLRequest)(nil),   // 2: headscale.v1.SetACLRequest
+	(*SetACLResponse)(nil),  // 3: headscale.v1.SetACLResponse
+	(*structpb.Struct)(nil), // 4: google.protobuf.Struct
 }
 var file_headscale_v1_acl_proto_depIdxs = []int32{
-	5, // 0: headscale.v1.ACL.policy:type_name -> google.protobuf.Struct
-	6, // 1: headscale.v1.ACL.updated_at:type_name -> google.protobuf.Timestamp
-	5, // 2: headscale.v1.GetACLResponse.policy:type_name -> google.protobuf.Struct
-	6, // 3: headscale.v1.GetACLResponse.updated_at:type_name -> google.protobuf.Timestamp
-	5, // 4: headscale.v1.SetACLRequest.policy:type_name -> google.protobuf.Struct
-	5, // 5: headscale.v1.SetACLResponse.policy:type_name -> google.protobuf.Struct
-	6, // 6: headscale.v1.SetACLResponse.updated_at:type_name -> google.protobuf.Timestamp
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	4, // 0: headscale.v1.GetACLResponse.policy:type_name -> google.protobuf.Struct
+	4, // 1: headscale.v1.SetACLRequest.policy:type_name -> google.protobuf.Struct
+	4, // 2: headscale.v1.SetACLResponse.policy:type_name -> google.protobuf.Struct
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_headscale_v1_acl_proto_init() }
@@ -359,18 +264,6 @@ func file_headscale_v1_acl_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_headscale_v1_acl_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ACL); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_headscale_v1_acl_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetACLRequest); i {
 			case 0:
 				return &v.state
@@ -382,7 +275,7 @@ func file_headscale_v1_acl_proto_init() {
 				return nil
 			}
 		}
-		file_headscale_v1_acl_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_headscale_v1_acl_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetACLResponse); i {
 			case 0:
 				return &v.state
@@ -394,7 +287,7 @@ func file_headscale_v1_acl_proto_init() {
 				return nil
 			}
 		}
-		file_headscale_v1_acl_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_headscale_v1_acl_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SetACLRequest); i {
 			case 0:
 				return &v.state
@@ -406,7 +299,7 @@ func file_headscale_v1_acl_proto_init() {
 				return nil
 			}
 		}
-		file_headscale_v1_acl_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_headscale_v1_acl_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SetACLResponse); i {
 			case 0:
 				return &v.state
@@ -425,7 +318,7 @@ func file_headscale_v1_acl_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_headscale_v1_acl_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

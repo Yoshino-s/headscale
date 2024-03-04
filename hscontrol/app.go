@@ -3,6 +3,7 @@ package hscontrol
 import (
 	"context"
 	"crypto/tls"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -115,7 +116,10 @@ func NewHeadscale(cfg *types.Config) (*Headscale, error) {
 
 	noisePrivateKey, err := readOrCreatePrivateKey(cfg.NoisePrivateKeyPath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read or create Noise protocol private key: %w", err)
+		return nil, fmt.Errorf(
+			"failed to read or create Noise protocol private key: %w",
+			err,
+		)
 	}
 
 	registrationCache := cache.New(
@@ -156,7 +160,9 @@ func NewHeadscale(cfg *types.Config) (*Headscale, error) {
 
 	if app.cfg.DNSConfig != nil && app.cfg.DNSConfig.Proxied { // if MagicDNS
 		// TODO(kradalby): revisit why this takes a list.
-		magicDNSDomains := util.GenerateMagicDNSRootDomains([]netip.Prefix{*cfg.PrefixV4, *cfg.PrefixV6})
+		magicDNSDomains := util.GenerateMagicDNSRootDomains(
+			[]netip.Prefix{*cfg.PrefixV4, *cfg.PrefixV6},
+		)
 		// we might have routes already from Split DNS
 		if app.cfg.DNSConfig.Routes == nil {
 			app.cfg.DNSConfig.Routes = make(map[string][]*dnstype.Resolver)
@@ -169,7 +175,10 @@ func NewHeadscale(cfg *types.Config) (*Headscale, error) {
 	if cfg.DERP.ServerEnabled {
 		derpServerKey, err := readOrCreatePrivateKey(cfg.DERP.ServerPrivateKeyPath)
 		if err != nil {
-			return nil, fmt.Errorf("failed to read or create DERP server private key: %w", err)
+			return nil, fmt.Errorf(
+				"failed to read or create DERP server private key: %w",
+				err,
+			)
 		}
 
 		if derpServerKey.Equal(*noisePrivateKey) {
@@ -267,7 +276,8 @@ func (h *Headscale) scheduledDERPMapUpdateWorker(cancelChan <-chan struct{}) {
 		case <-ticker.C:
 			log.Info().Msg("Fetching DERPMap updates")
 			h.DERPMap = derp.GetDERPMap(h.cfg.DERP)
-			if h.cfg.DERP.ServerEnabled && h.cfg.DERP.AutomaticallyAddEmbeddedDerpRegion {
+			if h.cfg.DERP.ServerEnabled &&
+				h.cfg.DERP.AutomaticallyAddEmbeddedDerpRegion {
 				region, _ := h.DERPServer.GenerateRegion()
 				h.DERPMap.Regions[region.RegionID] = &region
 			}
@@ -471,7 +481,10 @@ func (h *Headscale) createRouter(grpcMux *grpcRuntime.ServeMux) *mux.Router {
 	if h.cfg.DERP.ServerEnabled {
 		router.HandleFunc("/derp", h.DERPServer.DERPHandler)
 		router.HandleFunc("/derp/probe", derpServer.DERPProbeHandler)
-		router.HandleFunc("/bootstrap-dns", derpServer.DERPBootstrapDNSHandler(h.DERPMap))
+		router.HandleFunc(
+			"/bootstrap-dns",
+			derpServer.DERPBootstrapDNSHandler(h.DERPMap),
+		)
 	}
 
 	apiRouter := router.PathPrefix("/api").Subrouter()
@@ -481,6 +494,54 @@ func (h *Headscale) createRouter(grpcMux *grpcRuntime.ServeMux) *mux.Router {
 	router.PathPrefix("/").HandlerFunc(notFoundHandler)
 
 	return router
+}
+
+func (h *Headscale) ReadACLPolicy() (pol *policy.ACLPolicy, err error) {
+	if h.cfg.ACL.PolicyMode == types.PolicyModeFile {
+		if h.cfg.ACL.PolicyPath == "" {
+			return
+		}
+		log.Debug().
+			Str("path", h.cfg.ACL.PolicyPath).
+			Msg("Loading ACL policy from file")
+		aclPath := util.AbsolutePathFromConfigPath(h.cfg.ACL.PolicyPath)
+		pol, err = policy.LoadACLPolicyFromPath(aclPath)
+		if err != nil {
+			return
+		}
+	} else if h.cfg.ACL.PolicyMode == types.PolicyModeDB {
+		var acl *types.ACL
+		log.Debug().Msg("Loading ACL policy from database")
+		acl, err = h.db.GetACL()
+		if err != nil {
+			return
+		}
+		if err = json.Unmarshal(acl.Policy, &pol); err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+func (h *Headscale) LoadACLPolicy(reload bool) error {
+	pol, err := h.ReadACLPolicy()
+	if err != nil {
+		return err
+	}
+
+	h.ACLPolicy = pol
+
+	if reload {
+		log.Info().
+			Msg("ACL policy successfully reloaded, notifying nodes of change")
+		ctx := types.NotifyCtx(context.Background(), "acl-sighup", "na")
+		h.nodeNotifier.NotifyAll(ctx, types.StateUpdate{
+			Type: types.StateFullUpdate,
+		})
+	}
+
+	return nil
 }
 
 // Serve launches a GIN server with the Headscale API.
@@ -738,7 +799,12 @@ func (h *Headscale) Serve() error {
 			log.Fatal().Msg("tailsql requires TS_AUTHKEY to be set")
 		}
 		tailsqlContext = context.Background()
-		go runTailSQLService(ctx, util.TSLogfWrapper(), tailsqlStateDir, h.cfg.Database.Sqlite.Path)
+		go runTailSQLService(
+			ctx,
+			util.TSLogfWrapper(),
+			tailsqlStateDir,
+			h.cfg.Database.Sqlite.Path,
+		)
 	}
 
 	// Handle common process-killing signals so we can gracefully shut down:
@@ -762,24 +828,9 @@ func (h *Headscale) Serve() error {
 
 				// TODO(kradalby): Reload config on SIGHUP
 
-				if h.cfg.ACL.PolicyPath != "" {
-					aclPath := util.AbsolutePathFromConfigPath(h.cfg.ACL.PolicyPath)
-					pol, err := policy.LoadACLPolicyFromPath(aclPath)
-					if err != nil {
-						log.Error().Err(err).Msg("Failed to reload ACL policy")
-					}
-
-					h.ACLPolicy = pol
-					log.Info().
-						Str("path", aclPath).
-						Msg("ACL policy successfully reloaded, notifying nodes of change")
-
-					ctx := types.NotifyCtx(context.Background(), "acl-sighup", "na")
-					h.nodeNotifier.NotifyAll(ctx, types.StateUpdate{
-						Type: types.StateFullUpdate,
-					})
+				if err := h.LoadACLPolicy(true); err != nil {
+					log.Error().Err(err).Msg("Failed to reload ACL policy")
 				}
-
 			default:
 				log.Info().
 					Str("signal", sig.String()).
